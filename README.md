@@ -18,58 +18,77 @@ Alzheimer hastalığı, demansın en yaygın türüdür ve erken teşhis büyük
 ### 1. **CNN (Convolutional Neural Network)**
 - **Dosya**: `cnn.py`
 - **Veri Seti**: Orijinal dataset (70-30 split)
+- **Görüntü Formatı**: Grayscale (1 kanal)
 - **Özellikler**:
-  - Farklı nöron konfigürasyonları test edildi
-  - 6 farklı optimizasyon algoritması karşılaştırıldı
+  - Farklı nöron konfigürasyonları test edildi: (32,32), (64,64), (32,32,32,32), (32,32,64,64), (64,64,64,64)
+  - 6 farklı optimizasyon algoritması karşılaştırıldı: Adam, RMSprop, SGD, Adagrad, Adadelta, Nadam
   - Early stopping ve learning rate reduction kullanıldı
+  - Dropout katmanları ile overfitting önlendi
 
 ### 2. **DenseNet121**
 - **Dosya**: `densenet121.py`
 - **Veri Seti**: 50% Augmented 20% Split Dataset
+- **Görüntü Formatı**: RGB (3 kanal)
 - **Özellikler**:
   - Transfer öğrenme ile ImageNet ağırlıkları kullanıldı
   - Global Average Pooling ve Batch Normalization
   - 6 farklı optimizasyon algoritması test edildi
+  - Dropout rate: 0.5
 
 ### 3. **EfficientNetB0**
 - **Dosya**: `efficientnetb0.py`
 - **Veri Seti**: Orijinal dataset (80-20 split)
+- **Görüntü Formatı**: RGB (3 kanal)
 - **Özellikler**:
   - Son 30 katman fine-tuning
   - Cosine Annealing Learning Rate Scheduler
   - Sınıf ağırlıkları ile dengesiz veri seti yönetimi
+  - ModerateDemented sınıfı için 10x ağırlık artırımı
+  - Dropout rate: 0.2
 
 ### 4. **MobileNetV2**
 - **Dosya**: `mobilenetv2.py`
 - **Veri Seti**: 50% Augmented 20% Split Dataset
+- **Görüntü Formatı**: RGB (3 kanal)
 - **Özellikler**:
   - Hafif ve mobil uyumlu mimari
   - Transfer öğrenme ile optimize edilmiş performans
   - 6 farklı optimizasyon algoritması karşılaştırması
+  - Dropout rate: 0.5
+  - Dense katmanında 256 nöron
 
 ### 5. **ResNet50**
 - **Dosya**: `resnet50.py`
 - **Veri Seti**: Orijinal dataset (80-20 split)
+- **Görüntü Formatı**: RGB (3 kanal)
 - **Özellikler**:
   - Son 20 katman fine-tuning
   - Cosine Annealing Learning Rate Scheduler
-  - ModerateDemented sınıfı için özel ağırlık artırımı
+  - ModerateDemented sınıfı için 25x ağırlık artırımı
+  - Dropout rate: 0.5
+  - Batch size: 4 (düşük batch size)
 
 ### 6. **VGG16**
 - **Dosya**: `vgg16.py`
 - **Veri Seti**: Dataset 220 Split Dataset
+- **Görüntü Formatı**: RGB (3 kanal)
 - **Özellikler**:
   - Klasik VGG mimarisi
   - Transfer öğrenme ile ImageNet ağırlıkları
   - 6 farklı optimizasyon algoritması test edildi
+  - Dropout rate: 0.3
+  - Dense katmanında 128 nöron
 
 ### 7. **VGG19**
 - **Dosya**: `vgg19.py`
 - **Veri Seti**: Same Augmented 20% Split Dataset
+- **Görüntü Formatı**: RGB (3 kanal)
 - **Özellikler**:
   - VGG16'ya göre daha derin mimari
   - Transfer öğrenme ile optimize edilmiş performans
   - 6 farklı optimizasyon algoritması karşılaştırması
+  - Dropout rate: 0.5
+  - Dense katmanında 128 nöron
 
 ## 📊 Veri Seti
 
@@ -97,19 +116,19 @@ Proje, Alzheimer hastalığının 4 farklı aşamasını içeren beyin MRI gör�
 - **Google Colab**: Çalışma ortamı
 
 ### Optimizasyon Algoritmaları:
-- Adam
-- SGD (Stochastic Gradient Descent)
-- Nadam
-- RMSprop
-- Adadelta
-- Adagrad
+- **Adam**: Learning rate 0.001 (CNN, DenseNet, VGG16, VGG19), 0.0001 (EfficientNet, ResNet), 0.0005 (MobileNet)
+- **SGD**: Learning rate 0.01 (CNN, DenseNet, VGG16, VGG19), 0.00005 (EfficientNet, ResNet), 0.005 (MobileNet)
+- **Nadam**: Learning rate 0.002 (CNN, DenseNet, VGG16, VGG19), 0.0001 (EfficientNet, ResNet), 0.001 (MobileNet)
+- **RMSprop**: Learning rate 0.001 (CNN, DenseNet, VGG16, VGG19), 0.0001 (EfficientNet, ResNet), 0.0005 (MobileNet)
+- **Adadelta**: Learning rate 1.0 (CNN, DenseNet, VGG16, VGG19), 1.0 (EfficientNet, ResNet), 0.5 (MobileNet)
+- **Adagrad**: Learning rate 0.01 (CNN, DenseNet, VGG16, VGG19), 0.001 (EfficientNet, ResNet), 0.005 (MobileNet)
 
 ### Değerlendirme Metrikleri:
-- Accuracy (Doğruluk)
-- F1 Score (Ağırlıklı ortalama)
-- Recall Score (Ağırlıklı ortalama)
-- Confusion Matrix
-- Classification Report
+- **Accuracy (Doğruluk)**: Test seti üzerinde doğru tahmin oranı
+- **F1 Score (Ağırlıklı ortalama)**: Precision ve Recall'ın harmonik ortalaması
+- **Recall Score (Ağırlıklı ortalama)**: Gerçek pozitiflerin doğru tahmin edilme oranı
+- **Confusion Matrix**: Sınıf bazında karışıklık matrisi
+- **Classification Report**: Detaylı sınıf bazında performans raporu
 
 ## 🚀 Kurulum ve Kullanım
 
@@ -148,12 +167,48 @@ Her model için aşağıdaki analizler yapılmıştır:
    - Model mimarisi diyagramları
 4. **Detaylı Raporlar**: Classification report ile sınıf bazında performans
 
+## 📁 Proje Yapısı
+
+```
+Deep-Learning---Alzheimer-Disease/
+├── cnn.py                 # CNN modeli (Grayscale, 70-30 split)
+├── densenet121.py         # DenseNet121 modeli (RGB, Augmented dataset)
+├── efficientnetb0.py      # EfficientNetB0 modeli (RGB, 80-20 split)
+├── mobilenetv2.py         # MobileNetV2 modeli (RGB, Augmented dataset)
+├── resnet50.py            # ResNet50 modeli (RGB, 80-20 split)
+├── vgg16.py               # VGG16 modeli (RGB, 220 split dataset)
+├── vgg19.py               # VGG19 modeli (RGB, Augmented dataset)
+├── requirements.txt        # Gerekli Python kütüphaneleri
+├── README.md              # Proje dokümantasyonu
+└── bitirme.pdf            # Bitirme tezi
+```
+
+## 🔧 Model Konfigürasyonları
+
+### CNN Modeli:
+- **Giriş**: 224x224x1 (Grayscale)
+- **Konvolüsyon Katmanları**: Farklı nöron sayıları test edildi
+- **Dropout**: 0.2, 0.25, 0.3 oranlarında
+- **Dense Katmanları**: 100 ve 50 nöron
+
+### Transfer Learning Modelleri:
+- **Base Model**: ImageNet ağırlıkları ile önceden eğitilmiş
+- **Fine-tuning**: EfficientNet (son 30 katman), ResNet (son 20 katman)
+- **Global Average Pooling**: Özellik çıkarımı için
+- **Batch Normalization**: Eğitim stabilizasyonu için
+- **Dropout**: Overfitting önleme için
+- **Dense Katmanları**: 128-256 nöron arası
+
 ## 🔍 Önemli Bulgular
 
 - **Transfer Öğrenme**: ImageNet ağırlıkları ile eğitilen modeller daha iyi performans gösterdi
 - **Optimizasyon**: Adam ve Nadam optimizasyonları genellikle en iyi sonuçları verdi
 - **Veri Artırma**: Augmented veri setleri model performansını artırdı
 - **Sınıf Dengesizliği**: ModerateDemented sınıfı için özel ağırlık artırımı gerekli
+- **Fine-tuning**: EfficientNet ve ResNet modellerinde son katmanların eğitilebilir yapılması performansı artırdı
+- **Cosine Annealing**: SGD optimizasyonu ile birlikte kullanılan cosine annealing scheduler daha stabil eğitim sağladı
+- **Batch Size**: ResNet50'de düşük batch size (4) kullanılması memory optimizasyonu sağladı
+- **Dropout**: Farklı modellerde farklı dropout oranları (0.2-0.5) kullanılarak overfitting önlendi
 
 ## 📝 Lisans
 
